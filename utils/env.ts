@@ -1,0 +1,1 @@
+export const env={baseURL:process.env.BASE_URL||'http://localhost:5173',apiURL:process.env.API_URL||'http://localhost:5001',shopkeeperEmail:process.env.SHOPKEEPER_EMAIL||'',shopkeeperPassword:process.env.SHOPKEEPER_PASSWORD||'',customerEmail:process.env.CUSTOMER_EMAIL||'',customerPassword:process.env.CUSTOMER_PASSWORD||''};
