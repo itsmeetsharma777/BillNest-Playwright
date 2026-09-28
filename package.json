@@ -1,0 +1,26 @@
+{
+  "name": "billnest-playwright",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Playwright E2E tests for BillNest",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui",
+    "test:chromium": "playwright test --project=chromium",
+    "test:smoke": "playwright test tests/smoke",
+    "test:auth": "playwright test tests/auth",
+    "test:shopkeeper": "playwright test tests/shopkeeper",
+    "test:customer": "playwright test tests/customer",
+    "test:negative": "playwright test tests/negative",
+    "test:edge": "playwright test tests/edge-cases",
+    "report": "playwright show-report",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.55.0",
+    "@types/node": "^24.5.0",
+    "dotenv": "^17.2.2",
+    "typescript": "^5.9.2"
+  }
+}
