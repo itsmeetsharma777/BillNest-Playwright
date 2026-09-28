@@ -25,7 +25,7 @@ This document tracks the end-to-end test coverage required for the BillNest-Prod
 | Public landing / get started / explore | Render, CTA navigation, responsive layout, theme, broken links, console/page errors | Implemented: smoke baseline |
 | Shopkeeper authentication | Valid/invalid login, required fields, register, duplicate account, logout, session persistence, expired session | Implemented / needs full verification |
 | Customer authentication | Valid/invalid login, registration, validation, logout, session persistence | Implemented / needs full verification |
-| Password reset | Request reset, unknown email response, valid/invalid/expired token, reset password, old/new password behavior | Planned |
+| Password reset | Request/reset UI, generic confirmation, service failure, missing/invalid token, password rules/matching, mocked successful submit | Implemented with mocked API; real email delivery, expiry, token reuse, and session invalidation remain unverified |
 | Shop setup | First login without shop, create shop, required fields, duplicate/invalid values, update shop profile, access guard | Planned |
 | Shopkeeper dashboard | Data cards, loading/empty/error states, totals against seeded data, navigation | Planned |
 | Customer dashboard | Customer-specific summary, correct account data, empty/loading/error states | Planned |
