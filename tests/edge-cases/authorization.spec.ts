@@ -1,0 +1,2 @@
+import {test,expect} from '@playwright/test';
+test('unauthenticated visit to dashboard does not expose protected content',async({page})=>{await page.goto('/dashboard').catch(()=>undefined);await page.waitForLoadState('domcontentloaded').catch(()=>undefined);if(/login|sign-in|auth/i.test(page.url()))await expect(page).toHaveURL(/login|sign-in|auth/i);else await expect(page.getByText(/sign in|login|unauthorized|access denied/i).first()).toBeVisible();});
