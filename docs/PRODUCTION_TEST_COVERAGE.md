@@ -49,7 +49,7 @@ This document tracks the end-to-end test coverage required for the BillNest-Prod
 | Shopkeeper settings | Load/update profile or shop settings, validation, persistence, unauthorized fields | Planned |
 | Customer settings/account | Load/update account, validation, persistence, account security behavior | Planned |
 | Documents | Upload/generate/download, invalid file, access control, missing document | Planned |
-| Authorization / tenant isolation | Anonymous access, wrong role, cross-customer IDs, cross-shop records, protected APIs | Implemented: partial authorization tests; needs expansion |
+| Authorization / tenant isolation | Anonymous access, wrong role, cross-customer IDs, cross-shop records, protected APIs | Implemented: anonymous read-only API probes for protected modules; wrong-role and cross-tenant record isolation still need authenticated test identities and disposable fixtures |
 | API and application errors | API 4xx/5xx, network failure, validation messages, no uncaught page errors, safe error handling | Implemented: partial negative tests; needs expansion |
 | Security controls | CSRF behavior, rate limits, security headers, cookie flags, CORS policy, session expiry | Planned; some require API/integration-level tests |
 | Cross-browser / responsive | Chromium, Firefox, WebKit; key workflows at desktop and mobile viewport | Smoke verified in three browsers; workflow coverage planned |
