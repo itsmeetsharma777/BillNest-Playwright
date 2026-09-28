@@ -8,7 +8,7 @@ import { env } from '../../utils/env';
  */
 const publicRoutes = [
   '/', '/get-started', '/explore', '/forgot-password', '/reset-password', '/login', '/register',
-  '/shopkeeper/login', '/shopkeeper/register', 
+  '/shopkeeper/login', '/shopkeeper/register', '/shopkeeper/learn-more', 
   '/customer/login', '/customer/register', '/customer/learn-more',
 ];
 
