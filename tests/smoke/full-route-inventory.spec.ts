@@ -7,9 +7,9 @@ import { env } from '../../utils/env';
  * correctness. Authenticated routes require dedicated role-specific accounts.
  */
 const publicRoutes = [
-  '/', '/get-started', '/explore',
-  '/shopkeeper/login', '/shopkeeper/register', '/shopkeeper/forgot-password',
-  '/customer/login', '/customer/register',
+  '/', '/get-started', '/explore', '/forgot-password', '/reset-password', '/login', '/register',
+  '/shopkeeper/login', '/shopkeeper/register', 
+  '/customer/login', '/customer/register', '/customer/learn-more',
 ];
 
 test.describe('Complete public route inventory', () => {
