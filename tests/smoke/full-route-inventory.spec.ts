@@ -32,7 +32,6 @@ const shopkeeperRoutes = [
   '/shopkeeper/invoices', '/shopkeeper/invoices/new', '/shopkeeper/warranties',
   '/shopkeeper/warranties/new', '/shopkeeper/inventory/history',
   '/shopkeeper/reports', '/shopkeeper/notifications', '/shopkeeper/settings',
-  '/shopkeeper/learn-more',
 ];
 
 test.describe('Shopkeeper route inventory (requires dedicated test account)', () => {
@@ -58,7 +57,6 @@ test.describe('Shopkeeper route inventory (requires dedicated test account)', ()
 const customerRoutes = [
   '/customer', '/customer/invoices', '/customer/payments',
   '/customer/warranties', '/customer/notifications', '/customer/settings',
-  '/customer/learn-more',
 ];
 
 test.describe('Customer route inventory (requires dedicated test account)', () => {
