@@ -76,6 +76,11 @@ The workflow at `.github/workflows/playwright.yml` runs typechecking, smoke test
 
 Never use personal or production customer credentials. If secrets are not configured, authenticated tests may skip and CI does not establish that authenticated modules work.
 
+## Software Testing submission documents
+
+- [Production-to-Playwright coverage matrix](docs/PRODUCTION_TEST_COVERAGE.md) — module coverage, status definitions, completion criteria, and environment safeguards.
+- [Test case catalogue and execution log](docs/TEST_CASE_CATALOGUE.md) — test IDs, scenarios, expected results, test types, status, execution evidence log, and defect report template.
+
 ## Current verification
 
 The landing smoke suite was locally run successfully across Chromium, Firefox, and WebKit (9 passed). TypeScript typechecking also passed in the reported local run. This is not a claim that every authenticated or business workflow has been verified; final completion requires running the full suite against a suitable test environment with test accounts and reviewing all failures and skips.
