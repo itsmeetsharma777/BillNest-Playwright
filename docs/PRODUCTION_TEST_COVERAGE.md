@@ -29,11 +29,11 @@ This document tracks the end-to-end test coverage required for the BillNest-Prod
 | Shop setup | First login without shop, create shop, required fields, duplicate/invalid values, update shop profile, access guard | Planned |
 | Shopkeeper dashboard | Data cards, loading/empty/error states, totals against seeded data, navigation | Planned |
 | Customer dashboard | Customer-specific summary, correct account data, empty/loading/error states | Planned |
-| Products/catalog | List/search/filter, create/edit, required/invalid fields, price and quantity validation, deactivate/reactivate, details | Implemented: partial products coverage; needs verification |
+| Products/catalog | List/search/filter, advanced filters, create/edit, required/invalid fields, price and quantity validation, bulk actions, CSV import/export, deactivate/reactivate, variant manager | Implemented: Feature 22 dedicated spec; execution still requires dedicated test environment |
 | Product images | Upload, preview, primary image, replace/remove, unsupported type/size, failed upload | Planned |
 | Categories | List/search, create/edit, required/duplicate validation, deactivate and product associations | Planned |
 | Brands | List/search, create/edit, validation, deactivate and product associations | Planned |
-| Inventory | Stock adjustment, movement history, per-product history, invalid/negative quantity, audit record, stock reconciliation | Planned |
+| Inventory | Stock adjustment, movement history, per-product history, variant stock adjustment, invalid/negative quantity, audit record, stock reconciliation | Implemented: production integration + Feature 22 variant coverage; full execution requires dedicated test data |
 | Customers / ledger | Customer list/search, customer detail, ledger balance, invoice/payment history, invalid customer access | Planned |
 | Shopkeeper invoices | Create invoice, line items, quantities, discounts/tax if supported, validation, stock deduction, list/search/filter, details, cancel/restore stock | Implemented: partial invoices coverage; needs verification |
 | Invoice documents | Print, PDF download, content/filename, document access and errors | Planned |
