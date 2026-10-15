@@ -1,2 +1,23 @@
-import {test,expect} from '../../fixtures/testFixtures';import {env} from '../../utils/env';
-test.describe('Shopkeeper navigation',()=>{test.beforeEach(async({loginPage,dashboardPage})=>{test.skip(!env.shopkeeperEmail||!env.shopkeeperPassword,'Configure shopkeeper credentials in .env');await loginPage.open();await loginPage.login(env.shopkeeperEmail,env.shopkeeperPassword);await dashboardPage.expectVisible();});test('products/inventory opens',async({shopkeeperPage})=>{await shopkeeperPage.openProducts();await shopkeeperPage.expectProducts();});test('invoice page opens',async({shopkeeperPage,page})=>{await shopkeeperPage.openInvoices();await expect(page).toHaveURL(/invoice/i);});test('settings page opens',async({shopkeeperPage,page})=>{await shopkeeperPage.openSettings();await expect(page).toHaveURL(/settings/i);});});
+import { test, expect } from '../../fixtures/testFixtures';
+import { env } from '../../utils/env';
+import { loginAs } from '../../utils/auth';
+
+test.describe('Shopkeeper navigation', () => {
+  test.beforeEach(async ({ page }) => {
+    test.skip(!env.shopkeeperEmail || !env.shopkeeperPassword, 'Configure dedicated shopkeeper credentials in .env');
+    await loginAs(page, 'shopkeeper');
+  });
+
+  test('products/inventory opens', async ({ shopkeeperPage }) => {
+    await shopkeeperPage.openProducts();
+    await shopkeeperPage.expectProducts();
+  });
+
+  test('invoice page opens', async ({ shopkeeperPage }) => {
+    await shopkeeperPage.openInvoices();
+  });
+
+  test('settings page opens', async ({ shopkeeperPage }) => {
+    await shopkeeperPage.openSettings();
+  });
+});
