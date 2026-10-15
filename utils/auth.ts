@@ -1,5 +1,5 @@
 import { expect, Page, Route } from '@playwright/test';
-import { env } from './env';
+import { installReadOnlyApiMocks } from './apiMocks';
 
 type Role = 'shopkeeper' | 'customer';
 type LoginMode = 'success' | 'reject';
@@ -19,19 +19,15 @@ async function ignoreDocumentNavigation(route: Route): Promise<boolean> {
 }
 
 /**
- * Installs test-only auth/API responses for UI and route smoke tests.
- *
- * This keeps front-end route checks deterministic and independent of live
- * account state. It does not prove that the production authentication API works.
+ * Installs test-only authentication responses for frontend UI checks.
+ * Live backend authentication is deliberately not part of this helper.
  */
 export async function installMockAuth(page: Page, role: Role, mode: LoginMode = 'success'): Promise<void> {
   let signedIn = false;
   const user = {
     id: `playwright-${role}`,
     name: role === 'shopkeeper' ? 'Playwright Shopkeeper' : 'Playwright Customer',
-    email: role === 'shopkeeper'
-      ? (env.shopkeeperEmail || 'shopkeeper@playwright.invalid')
-      : (env.customerEmail || 'customer@playwright.invalid'),
+    email: `playwright-${role}@example.test`,
     role,
     isActive: true,
     emailVerified: true,
@@ -64,11 +60,11 @@ export async function installMockAuth(page: Page, role: Role, mode: LoginMode = 
     if (await ignoreDocumentNavigation(route)) return;
     await jsonResponse(route, signedIn && role === 'shopkeeper' ? 200 : 401,
       signedIn && role === 'shopkeeper'
-        ? { success: true, data: { shop: { _id: 'playwright-test-shop', name: 'Playwright Test Shop' } } }
+        ? { success: true, data: { shop: { _id: 'pw-test-shop', name: 'Playwright Test Shop' } } }
         : { success: false, message: 'Not authenticated' });
   });
 
-  // A stable seed keeps catalog controls, bulk-selection, and variant navigation testable.
+  // A deterministic catalog keeps UI controls testable without modifying real data.
   await page.route(/\/products(?:[?#]|$)/, async route => {
     if (await ignoreDocumentNavigation(route)) return;
     if (route.request().method() !== 'GET') {
@@ -79,7 +75,7 @@ export async function installMockAuth(page: Page, role: Role, mode: LoginMode = 
       success: true,
       data: {
         products: [{
-          _id: 'playwright-product-0001',
+          _id: 'pw-product-0001',
           name: 'Playwright Test Product',
           sku: 'PW-TEST-001',
           category: 'Test category',
@@ -91,7 +87,7 @@ export async function installMockAuth(page: Page, role: Role, mode: LoginMode = 
           stockQuantity: 10,
           lowStockThreshold: 2,
           warrantyPeriodMonths: 12,
-          description: 'Mocked read-only fixture for catalog UI checks',
+          description: 'Mock fixture for catalog UI checks',
           isActive: true,
           images: [],
           hasVariants: true,
@@ -133,24 +129,16 @@ export async function installMockAuth(page: Page, role: Role, mode: LoginMode = 
     }
     await route.continue();
   });
+
+  await installReadOnlyApiMocks(page, role);
 }
 
-/**
- * Signs in to a test-only mock session and asserts the correct role dashboard.
- * Use the optional live-auth suite to verify actual production credentials.
- */
+/** Signs in to a test-only mocked session and verifies the expected dashboard route. */
 export async function loginAs(page: Page, role: Role): Promise<void> {
   await installMockAuth(page, role);
-  const email = role === 'shopkeeper'
-    ? (env.shopkeeperEmail || 'shopkeeper@playwright.invalid')
-    : (env.customerEmail || 'customer@playwright.invalid');
-  const password = role === 'shopkeeper'
-    ? (env.shopkeeperPassword || 'Playwright-Test-Only-Password')
-    : (env.customerPassword || 'Playwright-Test-Only-Password');
-
   await page.goto(`/${role}/login`, { waitUntil: 'domcontentloaded' });
-  await page.getByLabel(/email/i).first().fill(email);
-  await page.getByLabel(/^password$/i).first().fill(password);
+  await page.getByLabel(/email/i).first().fill(`playwright-${role}@example.test`);
+  await page.getByLabel(/^password$/i).first().fill('Playwright-Test-Only-Password');
   await page.getByRole('button', { name: /sign in|log in|login/i }).click();
 
   await expect(page).toHaveURL(new RegExp(`/${role}(?:[?#]|$)`), { timeout: 15_000 });
