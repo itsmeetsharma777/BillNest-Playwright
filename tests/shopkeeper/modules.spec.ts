@@ -1,11 +1,7 @@
 import { test, expect } from '@playwright/test';
-import { env } from '../../utils/env';
 import { loginAs } from '../../utils/auth';
 
-test.describe('Shopkeeper modules - read-only navigation checks', () => {
-  test.skip(!env.shopkeeperEmail || !env.shopkeeperPassword,
-    'Requires dedicated SHOPKEEPER_EMAIL and SHOPKEEPER_PASSWORD credentials.');
-
+test.describe('Shopkeeper modules - UI navigation checks (mocked session)', () => {
   test.beforeEach(async ({ page }) => {
     await loginAs(page, 'shopkeeper');
   });
@@ -14,7 +10,7 @@ test.describe('Shopkeeper modules - read-only navigation checks', () => {
     test(`navigation to ${moduleName} is available`, async ({ page }) => {
       const nav = page.getByRole('link', { name: new RegExp(moduleName, 'i') }).first();
       if (!(await nav.isVisible().catch(() => false))) {
-        test.skip(true, `No visible navigation link detected for ${moduleName} on this account/layout.`);
+        test.skip(true, `No visible navigation link detected for ${moduleName} on this layout.`);
       }
       await nav.click();
       await expect(page.locator('body')).toBeVisible();
