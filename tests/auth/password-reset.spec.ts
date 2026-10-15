@@ -70,7 +70,7 @@ test.describe('Password reset UI (network mocked)', () => {
     await page.goto('/reset-password?token=not-a-real-token');
 
     await expect(page.getByRole('heading', { name: /reset link unavailable/i })).toBeVisible();
-    await expect(page.getByLabel(/new password/i)).toHaveCount(0);
+    await expect(page.getByLabel('New password', { exact: true })).toHaveCount(0);
   });
 
   test('reset-password enforces password requirements and matching confirmation in the UI', async ({ page }) => {
@@ -86,15 +86,15 @@ test.describe('Password reset UI (network mocked)', () => {
     const submit = page.getByRole('button', { name: /^reset password$/i });
     await expect(submit).toBeDisabled();
 
-    await page.getByLabel(/new password/i).fill('weak');
-    await page.getByLabel(/confirm new password/i).fill('weak');
+    await page.getByLabel('New password', { exact: true }).fill('weak');
+    await page.getByLabel('Confirm new password', { exact: true }).fill('weak');
     await expect(submit).toBeDisabled();
 
-    await page.getByLabel(/new password/i).fill('StrongPass1!');
-    await page.getByLabel(/confirm new password/i).fill('DifferentPass1!');
+    await page.getByLabel('New password', { exact: true }).fill('StrongPass1!');
+    await page.getByLabel('Confirm new password', { exact: true }).fill('DifferentPass1!');
     await expect(submit).toBeDisabled();
 
-    await page.getByLabel(/confirm new password/i).fill('StrongPass1!');
+    await page.getByLabel('Confirm new password', { exact: true }).fill('StrongPass1!');
     await expect(submit).toBeEnabled();
   });
 
@@ -116,8 +116,8 @@ test.describe('Password reset UI (network mocked)', () => {
     });
 
     await page.goto('/reset-password?token=playwright-mocked-token');
-    await page.getByLabel(/new password/i).fill('StrongPass1!');
-    await page.getByLabel(/confirm new password/i).fill('StrongPass1!');
+    await page.getByLabel('New password', { exact: true }).fill('StrongPass1!');
+    await page.getByLabel('Confirm new password', { exact: true }).fill('StrongPass1!');
     await page.getByRole('button', { name: /^reset password$/i }).click();
 
     await expect(page.getByRole('heading', { name: /password reset successful/i })).toBeVisible();
