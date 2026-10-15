@@ -1,10 +1,8 @@
-import { test, expect } from '../../fixtures/testFixtures';
-import { env } from '../../utils/env';
+import { test } from '../../fixtures/testFixtures';
 import { loginAs } from '../../utils/auth';
 
-test.describe('Shopkeeper navigation', () => {
+test.describe('Shopkeeper navigation (mocked session)', () => {
   test.beforeEach(async ({ page }) => {
-    test.skip(!env.shopkeeperEmail || !env.shopkeeperPassword, 'Configure dedicated shopkeeper credentials in .env');
     await loginAs(page, 'shopkeeper');
   });
 
