@@ -1,2 +1,18 @@
-import {test,expect} from '../../fixtures/testFixtures';
-test('login form rejects empty submission',async({loginPage,page})=>{await loginPage.open();await loginPage.signInButton.click();const e=await loginPage.email.evaluate(el=>!(el as HTMLInputElement).checkValidity()).catch(()=>false);const p=await loginPage.password.evaluate(el=>!(el as HTMLInputElement).checkValidity()).catch(()=>false);if(e||p)expect(e||p).toBeTruthy();else await expect(page).toHaveURL(/login/i);});
+import { test, expect } from '../../fixtures/testFixtures';
+import { installMockAuth } from '../../utils/auth';
+
+test('login form rejects empty submission', async ({ loginPage, page }) => {
+  await installMockAuth(page, 'shopkeeper', 'reject');
+  await loginPage.open('shopkeeper');
+  await loginPage.signInButton.click();
+
+  const emailInvalid = await loginPage.email
+    .evaluate(el => !(el as HTMLInputElement).checkValidity())
+    .catch(() => false);
+  const passwordInvalid = await loginPage.password
+    .evaluate(el => !(el as HTMLInputElement).checkValidity())
+    .catch(() => false);
+
+  expect(emailInvalid || passwordInvalid).toBeTruthy();
+  await expect(page).toHaveURL(/\/shopkeeper\/login(?:[?#]|$)/);
+});
