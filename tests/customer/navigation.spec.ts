@@ -1,2 +1,22 @@
-import {test} from '../../fixtures/testFixtures';import {env} from '../../utils/env';
-test.describe('Customer navigation',()=>{test.beforeEach(async({loginPage,customerPage})=>{test.skip(!env.customerEmail||!env.customerPassword,'Configure customer credentials in .env');await loginPage.open();await loginPage.login(env.customerEmail,env.customerPassword);await customerPage.expectArea();});test('invoices are reachable',async({customerPage,page})=>{await customerPage.openInvoices();await page.waitForLoadState('domcontentloaded').catch(()=>undefined);});test('warranty is reachable',async({customerPage,page})=>{await customerPage.openWarranty();await page.waitForLoadState('domcontentloaded').catch(()=>undefined);});test('settings are reachable',async({customerPage,page})=>{await customerPage.openSettings();await page.waitForLoadState('domcontentloaded').catch(()=>undefined);});});
+import { test, expect } from '../../fixtures/testFixtures';
+import { env } from '../../utils/env';
+import { loginAs } from '../../utils/auth';
+
+test.describe('Customer navigation', () => {
+  test.beforeEach(async ({ page }) => {
+    test.skip(!env.customerEmail || !env.customerPassword, 'Configure dedicated customer credentials in .env');
+    await loginAs(page, 'customer');
+  });
+
+  test('invoices are reachable', async ({ customerPage }) => {
+    await customerPage.openInvoices();
+  });
+
+  test('warranty is reachable', async ({ customerPage }) => {
+    await customerPage.openWarranty();
+  });
+
+  test('settings are reachable', async ({ customerPage }) => {
+    await customerPage.openSettings();
+  });
+});
