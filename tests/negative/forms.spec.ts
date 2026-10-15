@@ -6,13 +6,7 @@ test('login form rejects empty submission', async ({ loginPage, page }) => {
   await loginPage.open('shopkeeper');
   await loginPage.signInButton.click();
 
-  const emailInvalid = await loginPage.email
-    .evaluate(el => !(el as HTMLInputElement).checkValidity())
-    .catch(() => false);
-  const passwordInvalid = await loginPage.password
-    .evaluate(el => !(el as HTMLInputElement).checkValidity())
-    .catch(() => false);
-
-  expect(emailInvalid || passwordInvalid).toBeTruthy();
+  // The app uses an inline validation message rather than native required fields.
+  await expect(page.getByRole('alert')).toContainText(/please enter your email address/i);
   await expect(page).toHaveURL(/\/shopkeeper\/login(?:[?#]|$)/);
 });
