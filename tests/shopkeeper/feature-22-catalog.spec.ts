@@ -29,8 +29,8 @@ test.describe('Shopkeeper advanced catalog Feature 22 (mocked session)', () => {
     const checkbox = page.locator('input[type="checkbox"][aria-label^="Select "]').first();
     await expect(checkbox).toBeVisible();
     await checkbox.check();
-    await expect(page.getByRole('button', { name: /Activate selected/i })).toBeVisible();
-    await expect(page.getByRole('button', { name: /Deactivate selected/i })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Activate selected', exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Deactivate selected', exact: true })).toBeVisible();
   });
 
   test('variant manager is reachable from catalog', async ({ shopkeeperPage, page }) => {
