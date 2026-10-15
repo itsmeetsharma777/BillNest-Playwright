@@ -17,11 +17,11 @@ test.describe('Shopkeeper advanced catalog Feature 22 (mocked session)', () => {
   test('advanced filters open and expose catalog dimensions', async ({ shopkeeperPage, page }) => {
     await shopkeeperPage.openProducts();
     await page.getByRole('button', { name: /Advanced filters/i }).click();
-    await expect(page.getByText('Stock', { exact: true })).toBeVisible();
-    await expect(page.getByText('Barcode', { exact: true })).toBeVisible();
-    await expect(page.getByText('Variants', { exact: true })).toBeVisible();
-    await expect(page.getByText('Min price', { exact: true })).toBeVisible();
-    await expect(page.getByText('Max price', { exact: true })).toBeVisible();
+    await expect(page.getByText('Stock', { exact: true }).first()).toBeVisible();
+    await expect(page.getByText('Barcode', { exact: true }).first()).toBeVisible();
+    await expect(page.getByText('Variants', { exact: true }).first()).toBeVisible();
+    await expect(page.getByText('Min price', { exact: true }).first()).toBeVisible();
+    await expect(page.getByText('Max price', { exact: true }).first()).toBeVisible();
   });
 
   test('product selection exposes bulk actions', async ({ shopkeeperPage, page }) => {
