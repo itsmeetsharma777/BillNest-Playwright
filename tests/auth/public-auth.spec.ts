@@ -1,6 +1,11 @@
 import { test, expect } from '@playwright/test';
+import { installMockAuth } from '../../utils/auth';
 
 test.describe('Public authentication entry points', () => {
+  test.beforeEach(async ({ page }) => {
+    await installMockAuth(page, 'shopkeeper', 'reject');
+  });
+
   test('landing page exposes a sign-in or login entry point', async ({ page }) => {
     await page.goto('/');
     const entry = page.getByRole('link', { name: /sign in|log in|login/i })
