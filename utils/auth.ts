@@ -12,6 +12,12 @@ function jsonResponse(route: Route, status: number, body: unknown) {
   });
 }
 
+async function ignoreDocumentNavigation(route: Route): Promise<boolean> {
+  if (route.request().resourceType() !== 'document') return false;
+  await route.continue();
+  return true;
+}
+
 /**
  * Installs test-only auth/API responses for UI and route smoke tests.
  *
@@ -32,12 +38,14 @@ export async function installMockAuth(page: Page, role: Role, mode: LoginMode = 
   };
 
   await page.route(/\/auth\/me(?:[?#]|$)/, async route => {
+    if (await ignoreDocumentNavigation(route)) return;
     await jsonResponse(route, signedIn ? 200 : 401, signedIn
       ? { success: true, data: { user } }
       : { success: false, message: 'Not authenticated' });
   });
 
   await page.route(/\/auth\/login(?:[?#]|$)/, async route => {
+    if (await ignoreDocumentNavigation(route)) return;
     if (mode === 'reject') {
       await jsonResponse(route, 401, { success: false, message: 'Invalid email or password.' });
       return;
@@ -47,11 +55,13 @@ export async function installMockAuth(page: Page, role: Role, mode: LoginMode = 
   });
 
   await page.route(/\/auth\/logout(?:[?#]|$)/, async route => {
+    if (await ignoreDocumentNavigation(route)) return;
     signedIn = false;
     await jsonResponse(route, 200, { success: true, message: 'Logged out' });
   });
 
   await page.route(/\/shops\/me(?:[?#]|$)/, async route => {
+    if (await ignoreDocumentNavigation(route)) return;
     await jsonResponse(route, signedIn && role === 'shopkeeper' ? 200 : 401,
       signedIn && role === 'shopkeeper'
         ? { success: true, data: { shop: { _id: 'playwright-test-shop', name: 'Playwright Test Shop' } } }
@@ -60,6 +70,7 @@ export async function installMockAuth(page: Page, role: Role, mode: LoginMode = 
 
   // A stable seed keeps catalog controls, bulk-selection, and variant navigation testable.
   await page.route(/\/products(?:[?#]|$)/, async route => {
+    if (await ignoreDocumentNavigation(route)) return;
     if (route.request().method() !== 'GET') {
       await route.continue();
       return;
@@ -92,6 +103,7 @@ export async function installMockAuth(page: Page, role: Role, mode: LoginMode = 
   });
 
   await page.route(/\/categories(?:[?#]|$)/, async route => {
+    if (await ignoreDocumentNavigation(route)) return;
     if (route.request().method() !== 'GET') {
       await route.continue();
       return;
@@ -100,6 +112,7 @@ export async function installMockAuth(page: Page, role: Role, mode: LoginMode = 
   });
 
   await page.route(/\/brands(?:[?#]|$)/, async route => {
+    if (await ignoreDocumentNavigation(route)) return;
     if (route.request().method() !== 'GET') {
       await route.continue();
       return;
@@ -108,10 +121,12 @@ export async function installMockAuth(page: Page, role: Role, mode: LoginMode = 
   });
 
   await page.route(/\/product-catalog\/analytics(?:[?#]|$)/, async route => {
+    if (await ignoreDocumentNavigation(route)) return;
     await jsonResponse(route, 200, { success: true, data: { analytics: {} } });
   });
 
   await page.route(/\/product-variants\/[^/?]+(?:\?.*)?$/, async route => {
+    if (await ignoreDocumentNavigation(route)) return;
     if (route.request().method() === 'GET') {
       await jsonResponse(route, 200, { success: true, data: { variants: [] } });
       return;
