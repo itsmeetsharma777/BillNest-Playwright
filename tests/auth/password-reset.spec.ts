@@ -1,10 +1,14 @@
 import { test, expect } from '@playwright/test';
+import { installMockAuth } from '../../utils/auth';
 
 /**
  * Password reset UI tests use route interception. They never send reset
  * requests to the configured BillNest backend and never change an account.
  */
 test.describe('Password reset UI (network mocked)', () => {
+  test.beforeEach(async ({ page }) => {
+    await installMockAuth(page, 'shopkeeper', 'reject');
+  });
   test('forgot-password page shows required email input and submit button', async ({ page }) => {
     await page.goto('/forgot-password');
 
