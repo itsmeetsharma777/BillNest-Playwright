@@ -1,11 +1,10 @@
 import { test, expect } from '@playwright/test';
-import { env } from '../../utils/env';
 import { loginAs } from '../../utils/auth';
 
 /**
  * Route inventory checks validate route resolution and visible application
- * output only. They are not a substitute for complete business workflow tests.
- * Authenticated routes require dedicated role-specific test accounts.
+ * output only. Authenticated paths use a deterministic test-only mock session;
+ * live authentication and API authorization are covered separately.
  */
 const publicRoutes = [
   '/', '/get-started', '/explore', '/forgot-password', '/reset-password', '/login', '/register',
@@ -35,10 +34,7 @@ const shopkeeperRoutes = [
   '/shopkeeper/reports', '/shopkeeper/notifications', '/shopkeeper/settings',
 ];
 
-test.describe('Shopkeeper route inventory (requires dedicated test account)', () => {
-  test.skip(!env.shopkeeperEmail || !env.shopkeeperPassword,
-    'Set dedicated SHOPKEEPER_EMAIL and SHOPKEEPER_PASSWORD.');
-
+test.describe('Shopkeeper route inventory (mocked session)', () => {
   test.beforeEach(async ({ page }) => {
     await loginAs(page, 'shopkeeper');
   });
@@ -59,10 +55,7 @@ const customerRoutes = [
   '/customer/warranties', '/customer/notifications', '/customer/settings',
 ];
 
-test.describe('Customer route inventory (requires dedicated test account)', () => {
-  test.skip(!env.customerEmail || !env.customerPassword,
-    'Set dedicated CUSTOMER_EMAIL and CUSTOMER_PASSWORD.');
-
+test.describe('Customer route inventory (mocked session)', () => {
   test.beforeEach(async ({ page }) => {
     await loginAs(page, 'customer');
   });
