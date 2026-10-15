@@ -5,5 +5,8 @@ test('shopkeeper can log out of the mocked UI session', async ({ page, dashboard
   await loginAs(page, 'shopkeeper');
   await dashboardPage.expectVisible();
   await dashboardPage.logout();
-  await expect(page).toHaveURL(/\/shopkeeper\/login(?:[?#]|$)/i, { timeout: 10_000 });
+
+  // BillNest redirects the shopkeeper's Sign out action through /register.
+  await expect(page).toHaveURL(/\/shopkeeper\/register(?:[?#]|$)/i, { timeout: 10_000 });
+  await expect(page.getByRole('button', { name: /sign in|log in|login/i }).first()).toBeVisible();
 });
