@@ -3,13 +3,13 @@ import { env } from '../../utils/env';
 import { testData } from '../../utils/testData';
 
 test.describe('Authentication - Login', () => {
-  test('login form renders', async ({ loginPage }) => {
+  test('shopkeeper login form renders', async ({ loginPage, page }) => {
     await loginPage.open('shopkeeper');
     await loginPage.expectForm();
-    await expect(loginPage.page).toHaveURL(/\/shopkeeper\/login(?:[?#]|$)/);
+    await expect(page).toHaveURL(/\/shopkeeper\/login(?:[?#]|$)/);
   });
 
-  test('invalid credentials stay rejected', async ({ loginPage, page }) => {
+  test('invalid shopkeeper credentials stay rejected', async ({ loginPage, page }) => {
     await loginPage.open('shopkeeper');
     await loginPage.login(testData.invalidEmail, testData.invalidPassword);
     await expect(page).toHaveURL(/\/shopkeeper\/login(?:[?#]|$)/);
