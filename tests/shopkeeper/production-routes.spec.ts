@@ -1,5 +1,4 @@
 import { test, expect } from '@playwright/test';
-import { env } from '../../utils/env';
 import { loginAs } from '../../utils/auth';
 
 const routes = [
@@ -16,10 +15,7 @@ const routes = [
   ['/shopkeeper/settings', /settings/i],
 ] as const;
 
-test.describe('Shopkeeper production route access (read-only)', () => {
-  test.skip(!env.shopkeeperEmail || !env.shopkeeperPassword,
-    'Requires a dedicated test shopkeeper account; set SHOPKEEPER_EMAIL and SHOPKEEPER_PASSWORD.');
-
+test.describe('Shopkeeper route access (read-only UI, mocked session)', () => {
   test.beforeEach(async ({ page }) => {
     await loginAs(page, 'shopkeeper');
   });
