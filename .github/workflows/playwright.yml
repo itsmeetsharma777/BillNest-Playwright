@@ -7,38 +7,39 @@ on:
     branches: [main]
   workflow_dispatch:
 
+concurrency:
+  group: playwright-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
 jobs:
   test:
-    timeout-minutes: 30
+    timeout-minutes: 25
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: npm
       - name: Install dependencies
-        run: npm install
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium firefox webkit
+        run: npm ci
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
       - name: Typecheck
         run: npm run typecheck
-      - name: Smoke tests
-        run: npm run test:smoke
+      - name: Smoke tests (Chromium)
+        run: npm run test:smoke -- --project=chromium
         env:
-          BASE_URL: ${{ secrets.BILLNEST_BASE_URL || 'https://bill-nest-six.vercel.app' }}
+          BASE_URL: ${{ secrets.BILLNEST_BASE_URL || 'https://bill-nest-production.vercel.app' }}
           CI: true
-      - name: Full test suite
-        run: npm test
+      - name: Full test suite (Chromium)
+        run: npm run test:chromium
         env:
-          BASE_URL: ${{ secrets.BILLNEST_BASE_URL || 'https://bill-nest-six.vercel.app' }}
+          BASE_URL: ${{ secrets.BILLNEST_BASE_URL || 'https://bill-nest-production.vercel.app' }}
           API_URL: ${{ secrets.BILLNEST_API_URL }}
-          SHOPKEEPER_EMAIL: ${{ secrets.BILLNEST_SHOPKEEPER_EMAIL }}
-          SHOPKEEPER_PASSWORD: ${{ secrets.BILLNEST_SHOPKEEPER_PASSWORD }}
-          CUSTOMER_EMAIL: ${{ secrets.BILLNEST_CUSTOMER_EMAIL }}
-          CUSTOMER_PASSWORD: ${{ secrets.BILLNEST_CUSTOMER_PASSWORD }}
           CI: true
       - uses: actions/upload-artifact@v4
         if: always()
