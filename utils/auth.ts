@@ -32,11 +32,9 @@ export async function installMockAuth(page: Page, role: Role, mode: LoginMode = 
   };
 
   await page.route(/\/auth\/me(?:[?#]|$)/, async route => {
-    if (signedIn) {
-      await jsonResponse(route, 200, { success: true, data: { user } });
-    } else {
-      await jsonResponse(route, 401, { success: false, message: 'Not authenticated' });
-    }
+    await jsonResponse(route, signedIn ? 200 : 401, signedIn
+      ? { success: true, data: { user } }
+      : { success: false, message: 'Not authenticated' });
   });
 
   await page.route(/\/auth\/login(?:[?#]|$)/, async route => {
@@ -44,7 +42,6 @@ export async function installMockAuth(page: Page, role: Role, mode: LoginMode = 
       await jsonResponse(route, 401, { success: false, message: 'Invalid email or password.' });
       return;
     }
-
     signedIn = true;
     await jsonResponse(route, 200, { success: true, data: { user } });
   });
@@ -55,23 +52,43 @@ export async function installMockAuth(page: Page, role: Role, mode: LoginMode = 
   });
 
   await page.route(/\/shops\/me(?:[?#]|$)/, async route => {
-    if (signedIn && role === 'shopkeeper') {
-      await jsonResponse(route, 200, {
-        success: true,
-        data: { shop: { _id: 'playwright-test-shop', name: 'Playwright Test Shop' } },
-      });
-    } else {
-      await jsonResponse(route, 401, { success: false, message: 'Not authenticated' });
-    }
+    await jsonResponse(route, signedIn && role === 'shopkeeper' ? 200 : 401,
+      signedIn && role === 'shopkeeper'
+        ? { success: true, data: { shop: { _id: 'playwright-test-shop', name: 'Playwright Test Shop' } } }
+        : { success: false, message: 'Not authenticated' });
   });
 
-  // Stable empty catalog payloads keep read-only catalog screens deterministic.
+  // A stable seed keeps catalog controls, bulk-selection, and variant navigation testable.
   await page.route(/\/products(?:[?#]|$)/, async route => {
     if (route.request().method() !== 'GET') {
       await route.continue();
       return;
     }
-    await jsonResponse(route, 200, { success: true, data: { products: [], pagination: { hasMore: false } } });
+    await jsonResponse(route, 200, {
+      success: true,
+      data: {
+        products: [{
+          _id: 'playwright-product-0001',
+          name: 'Playwright Test Product',
+          sku: 'PW-TEST-001',
+          category: 'Test category',
+          brand: 'Test brand',
+          barcode: 'PW123456',
+          unit: 'piece',
+          purchasePrice: 100,
+          sellingPrice: 150,
+          stockQuantity: 10,
+          lowStockThreshold: 2,
+          warrantyPeriodMonths: 12,
+          description: 'Mocked read-only fixture for catalog UI checks',
+          isActive: true,
+          images: [],
+          hasVariants: true,
+          createdAt: '2026-01-01T00:00:00.000Z',
+        }],
+        pagination: { hasMore: false },
+      },
+    });
   });
 
   await page.route(/\/categories(?:[?#]|$)/, async route => {
@@ -93,11 +110,19 @@ export async function installMockAuth(page: Page, role: Role, mode: LoginMode = 
   await page.route(/\/product-catalog\/analytics(?:[?#]|$)/, async route => {
     await jsonResponse(route, 200, { success: true, data: { analytics: {} } });
   });
+
+  await page.route(/\/product-variants\/[^/?]+(?:\?.*)?$/, async route => {
+    if (route.request().method() === 'GET') {
+      await jsonResponse(route, 200, { success: true, data: { variants: [] } });
+      return;
+    }
+    await route.continue();
+  });
 }
 
 /**
- * Sign in to a test-only mock session and assert the correct role dashboard.
- * Use dedicated live-auth tests separately when verifying production credentials.
+ * Signs in to a test-only mock session and asserts the correct role dashboard.
+ * Use the optional live-auth suite to verify actual production credentials.
  */
 export async function loginAs(page: Page, role: Role): Promise<void> {
   await installMockAuth(page, role);
