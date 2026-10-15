@@ -3,10 +3,8 @@ import { env } from './env';
 
 /**
  * Shared role-based test login.
- *
- * Navigate directly to the role-specific route rather than depending on
- * landing-page CTA text. A login is successful only when the app navigates to
- * the corresponding dashboard; remaining on either login form is a failure.
+ * Always navigate directly to the role-specific route and require the
+ * successful dashboard URL; remaining on a login form is not authentication.
  */
 export async function loginAs(page: Page, role: 'shopkeeper' | 'customer'): Promise<void> {
   const credentials = role === 'shopkeeper'
@@ -26,7 +24,7 @@ export async function loginAs(page: Page, role: 'shopkeeper' | 'customer'): Prom
   await page.getByLabel(/^password$/i).first().fill(credentials.password);
   await page.getByRole('button', { name: /sign in|log in|login/i }).click();
 
-  // BillNest's role-specific login flow redirects to /shopkeeper or /customer.
-  await expect(page).toHaveURL(new RegExp(`/\${role}(?:[?#]|$)`), { timeout: 15_000 });
+  // The production app redirects successful role logins to /shopkeeper or /customer.
+  await expect(page).toHaveURL(new RegExp(`/${role}(?:[?#]|$)`), { timeout: 15_000 });
   await expect(page.locator('body')).toBeVisible();
 }
