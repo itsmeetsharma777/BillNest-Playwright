@@ -1,10 +1,8 @@
-import { test, expect } from '../../fixtures/testFixtures';
-import { env } from '../../utils/env';
+import { test } from '../../fixtures/testFixtures';
 import { loginAs } from '../../utils/auth';
 
-test.describe('Customer navigation', () => {
+test.describe('Customer navigation (mocked session)', () => {
   test.beforeEach(async ({ page }) => {
-    test.skip(!env.customerEmail || !env.customerPassword, 'Configure dedicated customer credentials in .env');
     await loginAs(page, 'customer');
   });
 
