@@ -1,11 +1,7 @@
 import { test, expect } from '@playwright/test';
-import { env } from '../../utils/env';
 import { loginAs } from '../../utils/auth';
 
-test.describe('Customer portal - read-only navigation checks', () => {
-  test.skip(!env.customerEmail || !env.customerPassword,
-    'Requires dedicated CUSTOMER_EMAIL and CUSTOMER_PASSWORD credentials.');
-
+test.describe('Customer portal - read-only UI navigation checks (mocked session)', () => {
   test('customer can sign in and view the portal', async ({ page }) => {
     await loginAs(page, 'customer');
     await expect(page).toHaveURL(/\/customer(?:[?#]|$)/);
