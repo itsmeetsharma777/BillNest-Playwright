@@ -1,6 +1,11 @@
 import { test, expect } from '@playwright/test';
+import { installMockAuth } from '../../utils/auth';
 
 test.describe('Public-facing resilience', () => {
+  test.beforeEach(async ({ page }) => {
+    await installMockAuth(page, 'shopkeeper', 'reject');
+  });
+
   test('unknown route does not expose a server stack trace', async ({ page }) => {
     await page.goto('/this-route-should-not-exist-playwright');
     await expect(page.locator('body')).toBeVisible();
