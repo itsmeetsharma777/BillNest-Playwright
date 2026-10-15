@@ -1,8 +1,24 @@
 import { expect } from '@playwright/test';
 import { BasePage } from './BasePage';
+
 export class CustomerPage extends BasePage {
- async expectArea(){await expect(this.page.getByText(/invoice|warranty|customer|portal/i).first()).toBeVisible();}
- async openInvoices(){const l=this.page.getByRole('link',{name:/invoice/i}).first();if(await l.isVisible().catch(()=>false))await l.click();}
- async openWarranty(){const l=this.page.getByRole('link',{name:/warranty/i}).first();if(await l.isVisible().catch(()=>false))await l.click();}
- async openSettings(){const l=this.page.getByRole('link',{name:/settings/i}).first();if(await l.isVisible().catch(()=>false))await l.click();}
+  async expectArea() {
+    await expect(this.page).toHaveURL(/\/customer(?:[?#]|$)/, { timeout: 15_000 });
+    await expect(this.page.locator('body')).toBeVisible();
+  }
+
+  async openInvoices() {
+    await this.page.getByRole('link', { name: /invoices?/i }).first().click();
+    await expect(this.page).toHaveURL(/\/customer\/invoices(?:[?#]|$)/);
+  }
+
+  async openWarranty() {
+    await this.page.getByRole('link', { name: /warranties/i }).first().click();
+    await expect(this.page).toHaveURL(/\/customer\/warranties(?:[?#]|$)/);
+  }
+
+  async openSettings() {
+    await this.page.getByRole('link', { name: /settings/i }).first().click();
+    await expect(this.page).toHaveURL(/\/customer\/settings(?:[?#]|$)/);
+  }
 }
