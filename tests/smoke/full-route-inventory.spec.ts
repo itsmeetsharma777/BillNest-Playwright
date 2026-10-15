@@ -13,6 +13,10 @@ const publicRoutes = [
 ];
 
 test.describe('Complete public route inventory', () => {
+  test.beforeEach(async ({ page }) => {
+    await installMockAuth(page, 'shopkeeper', 'reject');
+  });
+
   for (const path of publicRoutes) {
     test(`public route resolves: ${path}`, async ({ page }) => {
       const errors: string[] = [];
@@ -78,6 +82,7 @@ test.describe('Responsive layout baseline', () => {
     { name: 'mobile', width: 390, height: 844 },
   ]) {
     test(`landing page has no horizontal overflow at ${viewport.name}`, async ({ page }) => {
+      await installMockAuth(page, 'shopkeeper', 'reject');
       await page.setViewportSize({ width: viewport.width, height: viewport.height });
       await page.goto('/', { waitUntil: 'domcontentloaded' });
       const metrics = await page.evaluate(() => ({
