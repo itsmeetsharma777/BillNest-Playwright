@@ -39,6 +39,11 @@ jobs:
         env:
           BASE_URL: ${{ secrets.BILLNEST_BASE_URL || 'https://bill-nest-production.vercel.app' }}
           API_URL: ${{ secrets.BILLNEST_API_URL }}
+          SHOPKEEPER_EMAIL: ${{ secrets.BILLNEST_SHOPKEEPER_EMAIL }}
+          SHOPKEEPER_PASSWORD: ${{ secrets.BILLNEST_SHOPKEEPER_PASSWORD }}
+          CUSTOMER_EMAIL: ${{ secrets.BILLNEST_CUSTOMER_EMAIL }}
+          CUSTOMER_PASSWORD: ${{ secrets.BILLNEST_CUSTOMER_PASSWORD }}
+          RUN_LIVE_AUTH_TESTS: ${{ secrets.RUN_LIVE_AUTH_TESTS || 'false' }}
           CI: true
       - uses: actions/upload-artifact@v4
         if: always()
