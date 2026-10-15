@@ -1,5 +1,5 @@
 import { test, expect } from '../../fixtures/testFixtures';
-import { env } from '../../utils/env';
+import { installMockAuth, loginAs } from '../../utils/auth';
 import { testData } from '../../utils/testData';
 
 test.describe('Authentication - Login', () => {
@@ -9,25 +9,21 @@ test.describe('Authentication - Login', () => {
     await expect(page).toHaveURL(/\/shopkeeper\/login(?:[?#]|$)/);
   });
 
-  test('invalid shopkeeper credentials stay rejected', async ({ loginPage, page }) => {
+  test('invalid credentials stay rejected by the login UI', async ({ loginPage, page }) => {
+    await installMockAuth(page, 'shopkeeper', 'reject');
     await loginPage.open('shopkeeper');
-    await loginPage.login(testData.invalidEmail, testData.invalidPassword);
+    await loginPage.login('unknown.user@playwright.invalid', testData.invalidPassword);
     await expect(page).toHaveURL(/\/shopkeeper\/login(?:[?#]|$)/);
-    await expect(page.getByLabel(/^email$/i)).toBeVisible();
+    await expect(page.getByRole('alert')).toContainText(/invalid email or password/i);
   });
 
-  test('shopkeeper login', async ({ loginPage, dashboardPage }) => {
-    test.skip(!env.shopkeeperEmail || !env.shopkeeperPassword, 'Configure dedicated shopkeeper credentials in .env');
-    await loginPage.open('shopkeeper');
-    await loginPage.login(env.shopkeeperEmail, env.shopkeeperPassword);
+  test('shopkeeper can complete the login UI flow', async ({ page, dashboardPage }) => {
+    await loginAs(page, 'shopkeeper');
     await dashboardPage.expectVisible();
   });
 
-  test('customer login', async ({ loginPage, customerPage, page }) => {
-    test.skip(!env.customerEmail || !env.customerPassword, 'Configure dedicated customer credentials in .env');
-    await loginPage.open('customer');
-    await loginPage.login(env.customerEmail, env.customerPassword);
-    await expect(page).toHaveURL(/\/customer(?:[?#]|$)/, { timeout: 15_000 });
+  test('customer can complete the login UI flow', async ({ page, customerPage }) => {
+    await loginAs(page, 'customer');
     await customerPage.expectArea();
   });
 });
