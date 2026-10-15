@@ -1,10 +1,8 @@
 import { test, expect } from '../../fixtures/testFixtures';
-import { env } from '../../utils/env';
 import { loginAs } from '../../utils/auth';
 
-test.describe('Shopkeeper invoices', () => {
+test.describe('Shopkeeper invoices (mocked session)', () => {
   test.beforeEach(async ({ page }) => {
-    test.skip(!env.shopkeeperEmail || !env.shopkeeperPassword, 'Configure dedicated shopkeeper credentials in .env');
     await loginAs(page, 'shopkeeper');
   });
 
@@ -18,9 +16,9 @@ test.describe('Shopkeeper invoices', () => {
     if (await action.isVisible().catch(() => false)) {
       await expect(action).toBeEnabled();
     } else {
-      // The route itself is still required to be accessible; don't report a ghost action as enabled.
       await page.goto('/shopkeeper/invoices/new', { waitUntil: 'domcontentloaded' });
       await expect(page).toHaveURL(/\/shopkeeper\/invoices\/new(?:[?#]|$)/);
+      await expect(page.locator('form').first()).toBeVisible();
     }
   });
 });
