@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { loginAs } from '../../utils/auth';
+import { installMockAuth, loginAs } from '../../utils/auth';
 
 /**
  * Route inventory checks validate route resolution and visible application
