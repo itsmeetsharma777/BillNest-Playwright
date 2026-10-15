@@ -2,12 +2,11 @@ import { expect, Page } from '@playwright/test';
 import { env } from './env';
 
 /**
- * Shared test-only authentication helper.
+ * Shared role-based test login.
  *
- * Always navigate directly to the role-specific login route. Do not depend on
- * the landing-page menu labels, which can change independently of login.
- * Authentication succeeds only when the login route has been left and the
- * destination is not another role's login page.
+ * Navigate directly to the role-specific route rather than depending on
+ * landing-page CTA text. A login is successful only when the app navigates to
+ * the corresponding dashboard; remaining on either login form is a failure.
  */
 export async function loginAs(page: Page, role: 'shopkeeper' | 'customer'): Promise<void> {
   const credentials = role === 'shopkeeper'
@@ -16,7 +15,9 @@ export async function loginAs(page: Page, role: 'shopkeeper' | 'customer'): Prom
 
   if (!credentials.email || !credentials.password) {
     throw new Error(
-      `Missing ${role} test credentials. Set ${role === 'shopkeeper' ? 'SHOPKEEPER_EMAIL and SHOPKEEPER_PASSWORD' : 'CUSTOMER_EMAIL and CUSTOMER_PASSWORD'} in the local .env file.`,
+      `Missing ${role} test credentials. Set ${role === 'shopkeeper'
+        ? 'SHOPKEEPER_EMAIL and SHOPKEEPER_PASSWORD'
+        : 'CUSTOMER_EMAIL and CUSTOMER_PASSWORD'} in .env.`,
     );
   }
 
@@ -25,9 +26,7 @@ export async function loginAs(page: Page, role: 'shopkeeper' | 'customer'): Prom
   await page.getByLabel(/^password$/i).first().fill(credentials.password);
   await page.getByRole('button', { name: /sign in|log in|login/i }).click();
 
-  // Reject staying on any role login route; merely loading a page is not auth.
-  await expect(page).not.toHaveURL(/\/(?:shopkeeper|customer)\/login(?:[/?#]|$)/i, {
-    timeout: 15_000,
-  });
+  // BillNest's role-specific login flow redirects to /shopkeeper or /customer.
+  await expect(page).toHaveURL(new RegExp(`/\${role}(?:[?#]|$)`), { timeout: 15_000 });
   await expect(page.locator('body')).toBeVisible();
 }
