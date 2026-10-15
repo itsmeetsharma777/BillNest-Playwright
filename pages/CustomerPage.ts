@@ -8,12 +8,13 @@ export class CustomerPage extends BasePage {
   }
 
   async openInvoices() {
-    await this.page.getByRole('link', { name: /invoices?/i }).first().click();
+    // The production portal labels this destination "My Purchases".
+    await this.page.getByRole('link', { name: /my purchases|invoices?/i }).first().click();
     await expect(this.page).toHaveURL(/\/customer\/invoices(?:[?#]|$)/);
   }
 
   async openWarranty() {
-    await this.page.getByRole('link', { name: /warranties/i }).first().click();
+    await this.page.getByRole('link', { name: /warrant/i }).first().click();
     await expect(this.page).toHaveURL(/\/customer\/warranties(?:[?#]|$)/);
   }
 
