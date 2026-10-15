@@ -6,7 +6,8 @@ test('shopkeeper can log out of the mocked UI session', async ({ page, dashboard
   await dashboardPage.expectVisible();
   await dashboardPage.logout();
 
-  // BillNest redirects the shopkeeper's Sign out action through /register.
-  await expect(page).toHaveURL(/\/shopkeeper\/register(?:[?#]|$)/i, { timeout: 10_000 });
-  await expect(page.locator('body')).toBeVisible();
+  // Mock auth now reports an unauthenticated session, so the protected-route
+  // guard sends the browser to the shopkeeper login page.
+  await expect(page).toHaveURL(/\/shopkeeper\/login(?:[?#]|$)/i, { timeout: 10_000 });
+  await expect(page.getByLabel(/email/i).first()).toBeVisible();
 });
