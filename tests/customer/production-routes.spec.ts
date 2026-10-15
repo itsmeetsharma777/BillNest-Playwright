@@ -1,5 +1,4 @@
 import { test, expect } from '@playwright/test';
-import { env } from '../../utils/env';
 import { loginAs } from '../../utils/auth';
 
 const routes = [
@@ -11,10 +10,7 @@ const routes = [
   ['/customer/settings', /settings/i],
 ] as const;
 
-test.describe('Customer production route access (read-only)', () => {
-  test.skip(!env.customerEmail || !env.customerPassword,
-    'Requires a dedicated test customer account; set CUSTOMER_EMAIL and CUSTOMER_PASSWORD.');
-
+test.describe('Customer route access (read-only UI, mocked session)', () => {
   test.beforeEach(async ({ page }) => {
     await loginAs(page, 'customer');
   });
